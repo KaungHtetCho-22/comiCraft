@@ -11,7 +11,7 @@ const i18n = {
     translations: {
         en: {
             // Page title
-            pageTitle: 'comic-perfect',
+            pageTitle: 'ComicCraft',
 
             // Main header
             appName: 'ComicCraft AI',
