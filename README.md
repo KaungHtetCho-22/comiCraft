@@ -26,13 +26,9 @@
 
 <br/>
 
-<img src="assets/screenshot.png" alt="comiCraft Interface" width="800" style="border-radius: 12px;"/>
+<div align="center">
 
-<br/><br/>
-
-<video src="assets/demo.mp4" width="800" controls style="border-radius: 12px;">
-  Your browser does not support the video tag.
-</video>
+![comiCraft Demo](assets/demo.mp4)
 
 </div>
 
