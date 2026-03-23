@@ -106,7 +106,7 @@ class ComicService:
 
         system_prompt = f"""You are a professional comic storyboard script assistant. Please generate a {page_count}-page comic storyboard script based on the user's description.
 
-**IMPORTANT: Please use {style_desc} to design the storyboard content.**
+**IMPORTANT: Please use {style_desc} to design the storyboard content. However, if the user's prompt includes 'CRITICAL USER CONSTRAINTS' with Studio Art Style references, those Custom Studio Styles MUST take maximum priority for all visual descriptions, settings, and atmosphere.**
 
 **Language Requirement: {language_instruction}**
 
@@ -136,18 +136,22 @@ Please strictly follow the provided Schema structure to generate the storyboard 
 4. **Language**:
    - All content (titles, descriptions, dialogue) must follow the language requirement: {language_instruction}
 
-5. **Character Naming (CRITICAL)**:
-   - **ONLY use the character names/descriptions provided by the user.** If the user says "rabbit", use "rabbit" — do NOT replace with copyrighted character names.
-   - **DO NOT use any copyrighted or trademarked character names** (e.g., Mickey Mouse, Elsa, Totoro, etc.).
-   - The style setting only affects the visual appearance and art style, NOT the characters themselves.
-   - Create original character names if needed, but never use existing IP character names.
+5. **Character Naming & Studio Constraints (CRITICAL)**:
+   - **ONLY use the character names/descriptions provided by the user.**
+   - If the user provides "CRITICAL USER CONSTRAINTS" with "Studio character references", you MUST include those specific characters prominently in the story.
+   - For any characters defined in the Studio references, you MUST use their provided visual descriptions exactly as your character sheet traits.
+   - **DO NOT use any copyrighted or trademarked character names**. Create original names if needed, but prioritize Studio names.
 
 6. **Character Consistency (CRITICAL for visual coherence)**:
-   - In the FIRST panel of the FIRST page, include a brief character sheet description: enumerate each named character's FIXED visual traits (hair color & style, eye color, clothing color & style, body type, distinguishing features).
+   - In the FIRST panel of the FIRST page, include a brief character sheet description: enumerate each named character's FIXED visual traits. 
+   - **If a character was provided in the Studio constraints, use their exact provided description as their trait list.**
    - **Repeat these exact visual traits verbatim** in every subsequent panel that character appears in.
    - Format: "Character: [Name] — [trait 1], [trait 2], [trait 3]..." at the start of each panel description.
-   - NEVER change a character's appearance mid-story (no hair color changes, no clothing changes unless plot-relevant and explicitly noted).
-   - Secondary characters introduced later must also receive consistent trait descriptions from their first appearance onward.{continuation_section}"""
+   - NEVER change a character's appearance mid-story.
+   - Secondary characters introduced later must also receive consistent trait descriptions.
+
+7. **Integration of Custom Art Styles**:
+   - If the user provided a "Studio art style" constraint, you MUST describe the backgrounds, environment, and lighting using that exact style's description in the panels, ensuring the world feels exactly like the custom style.{continuation_section}"""
         return system_prompt
 
     def generate_comic_script(self, prompt: str, page_count: int = 3, rows_per_page: int = 4, continuation_context: Dict[str, Any] = None) -> List[Dict[str, Any]]:

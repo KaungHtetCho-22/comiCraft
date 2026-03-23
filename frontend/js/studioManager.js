@@ -211,7 +211,11 @@ class StudioManager {
             
             const info = document.createElement('div');
             info.className = 'studio-card-info';
-            info.innerHTML = `<strong>${item.name}</strong><div>${this.currentTab === 'characters' ? 'Character reference' : 'Art style reference'}</div><div class="studio-card-status">${item.active ? 'Active in generation' : 'Inactive'}</div>`;
+            const typeLabel = this.currentTab === 'characters' ? 'Character reference' : 'Art style reference';
+            const statusBadge = item.active
+                ? `<span class="studio-consistency-badge">&#10003; LOCKED IN</span>`
+                : `<span style="font-size:11px;color:var(--text-tertiary);font-weight:700;">Inactive</span>`;
+            info.innerHTML = `<strong>${item.name}</strong><div style="font-size:11px;color:var(--text-tertiary);margin:2px 0;">${typeLabel}</div><div style="margin-top:4px;">${statusBadge}</div>`;
             
             const actions = document.createElement('div');
             actions.className = 'studio-card-actions';
@@ -289,26 +293,41 @@ class StudioManager {
         this.generateBtn.innerText = 'Generating...';
         
         const imageBase64 = this.imagePreview.src && this.imagePreview.src.startsWith('data:') ? this.imagePreview.src : null;
-        
-        try {
-            // We'll use generateComicImage API but wrapped as a generic prompt
-            const prompt = `A standalone reference sheet design for a ${this.currentTab === 'characters' ? 'character' : 'art style'}. 
-Description: ${desc}
-The image should clearly showcase the design against a simple background. High quality, clear details.`;
 
-            // We fake a page_data to fool the backend structure
+        // Use the currently selected comic style so the reference image matches the storyboard
+        const comicStyleSelect = document.getElementById('comic-style');
+        const comicStyle = (comicStyleSelect && comicStyleSelect.value) ? comicStyleSelect.value : 'doraemon';
+        const itemName = this.nameInput.value.trim() || 'Reference';
+
+        try {
+            // Craft a style-matched reference prompt
+            let prompt;
+            if (this.currentTab === 'characters') {
+                prompt = `CHARACTER MODEL SHEET for "${itemName}" drawn in ${comicStyle} comic art style.
+Visual description: ${desc}
+Draw the character in a clean front-facing pose against a plain light background.
+Use the exact art style of ${comicStyle} comics — same linework, body proportions, and coloring.
+No panels, no speech bubbles, no background scenery, no text labels. One clear full-body character view only.`;
+            } else {
+                prompt = `ART STYLE SAMPLE for "${itemName}".
+Style description: ${desc}
+Create a single illustrative scene (no character dialogue) that clearly demonstrates this art style's color palette, line weight, atmosphere, and environment, drawn in ${comicStyle} style.
+Make it immediately recognisable as a visual reference for this comic art style.`;
+            }
+
+            // We fake a page_data to use the existing image-generation backend
             const fakePageData = {
-                title: `${this.nameInput.value || 'Reference'}`,
+                title: itemName,
                 rows: [{ panels: [{ text: prompt }] }]
             };
-            
-            // Pass the currently uploaded base64 image (if any) as referenceImg!
+
+            // Pass the currently uploaded base64 image (if any) as referenceImg
             const result = await ComicAPI.generateComicImage(
                 fakePageData,
                 googleApiKey,
                 imageBase64 ? [imageBase64] : null,
                 null,
-                'watercolor', // fallback style
+                comicStyle,
                 null,
                 'en'
             );

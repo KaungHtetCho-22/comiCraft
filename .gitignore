@@ -124,3 +124,5 @@ Thumbs.db
 ideas/
 
 backend/static/images/*
+
+.pytest_cache

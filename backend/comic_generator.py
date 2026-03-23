@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
-def generate_social_media_image_core(
+def generate_comic_image_core(
         prompt: str, 
         reference_img: Optional[str | list] = None,
         google_api_key: Optional[str] = None,
@@ -33,7 +33,7 @@ def generate_social_media_image_core(
     client = genai.Client(api_key=api_key, vertexai=False, http_options={'timeout':180000})
     MODEL_ID = "gemini-3-pro-image-preview"
     
-    logger.info(f"Generating social media image for: {prompt}")
+    logger.info(f"Generating comic image for: {prompt}")
     
     # Prepare contents
     contents = [prompt]
@@ -50,24 +50,22 @@ def generate_social_media_image_core(
         elif isinstance(reference_img, str):
             image_urls.append(reference_img)
             
-        for img_str in image_urls:
+        for idx, img_str in enumerate(image_urls):
             try:
+                img = None
                 if img_str.startswith('http'):
                     logger.info(f"Downloading reference image: {img_str}")
                     resp = requests.get(img_str, timeout=60)
                     resp.raise_for_status()
                     img = Image.open(io.BytesIO(resp.content))
-                    contents.append(img)
                 elif img_str.startswith("/backend/static/images/"):
                     logger.info(f"Processing reference image: {img_str}")
                     img_str = img_str.replace("/backend/", "")
                     img = Image.open(f"{os.getcwd()}/{img_str}")
-                    contents.append(img)
                 elif os.path.isabs(img_str) and os.path.isfile(img_str):
                     # Handle local absolute file paths (e.g., character reference images)
                     logger.info(f"Loading local reference image: {img_str}")
                     img = Image.open(img_str)
-                    contents.append(img)
                 elif img_str.startswith('data:image'):
                     logger.info("Processing base64 reference image")
                     # Extract base64 data
@@ -77,12 +75,15 @@ def generate_social_media_image_core(
                         encoded = img_str
                     data = base64.b64decode(encoded)
                     img = Image.open(io.BytesIO(data))
+                
+                if img:
+                    contents.append(f"\n[Image #{idx + 1}]:")
                     contents.append(img)
             except Exception as e:
                 logger.warning(f"Failed to process reference image {img_str[:50]}...: {e}")
 
     # Extract config from extra_body
-    aspect_ratio = "9:16"
+    aspect_ratio = "3:4"
     image_size = "2K"
 
     # Retry logic
@@ -157,7 +158,7 @@ if __name__ == "__main__":
         if not test_api_key:
             print("Please set GOOGLE_API_KEY environment variable for testing")
         else:
-            result = generate_social_media_image_core(
+            result = generate_comic_image_core(
                 "A cartoon monkey is sitting on a tree.",
                 google_api_key=test_api_key
             )

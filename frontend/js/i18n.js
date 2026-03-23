@@ -11,10 +11,10 @@ const i18n = {
     translations: {
         en: {
             // Page title
-            pageTitle: 'ComicCraft',
+            pageTitle: 'comiCraft',
 
             // Main header
-            appName: 'ComicCraft AI',
+            appName: 'comiCraft',
             configBtn: '⚙️ Config',
             themeLabel: 'Theme',
             themeBtnLight: 'Light',
@@ -174,8 +174,8 @@ const i18n = {
             languageLabel: 'Language',
         },
         my: {
-            pageTitle: 'ComicCraft AI',
-            appName: 'ComicCraft AI',
+            pageTitle: 'comiCraft',
+            appName: 'comiCraft',
             configBtn: '⚙️ ပြင်ဆင်မှုများ',
             themeLabel: 'အပြင်အဆင်',
             themeBtnLight: 'အလင်း',

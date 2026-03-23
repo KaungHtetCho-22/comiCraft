@@ -2212,7 +2212,7 @@ class UIController {
             const language = this.comicLanguageSelect.value;
 
             // Collect all generated page images as references
-            const referenceImages = [];
+            let referenceImages = [];
             if (this.generatedPagesImages) {
                 console.log('[Cover] generatedPagesImages:', this.generatedPagesImages);
                 console.log('[Cover] generatedPagesImages keys:', Object.keys(this.generatedPagesImages));

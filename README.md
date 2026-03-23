@@ -1,193 +1,220 @@
-# comiCraft
+<div align="center">
 
-comiCraft is a browser-based comic storyboard and image generation tool.
-It generates multi-page comic scripts, renders finished comic pages, keeps custom
-characters and art styles in a reusable Studio, and can continue an existing
-story without restarting the whole prompt.
+<br/>
 
-## What It Does
-
-- Generate multi-page comic storyboards from a prompt
-- Render final comic page images from storyboard layouts
-- Save custom characters and art styles in `My Studio`
-- Build locked character sheets and locked environment sheets from Studio items
-- Reuse those locked references to improve page-to-page consistency
-- Continue an existing story by appending new pages to the current session
-- Generate comic covers from existing story pages
-- Save multiple local sessions in browser storage
-
-## Current Workflow
-
-1. Enter a prompt.
-2. Set `Pages`, `Rows per Page`, `Comic Style`, and language.
-3. Click `Run` to generate storyboard pages.
-4. Click `Render Page` or `Render All` to create final comic images.
-5. Use `My Studio` to store reusable characters and art styles.
-6. Set `Pages` to how many pages to add and click `Continue +N` to extend the story.
-
-## Studio Features
-
-The Studio is the main consistency system in the app.
-
-- Characters: save reusable character references with name, description, and image
-- Art Styles: save reusable environment/style references with name, description, and image
-- Active toggle: only active Studio items participate in generation
-- Locked sheets: active Studio items are combined into:
-  - a locked character sheet
-  - a locked environment sheet
-
-Those locked sheets are injected as top-priority references during comic image generation.
-
-## Tech Stack
-
-- Frontend: HTML, CSS, vanilla JavaScript
-- Backend: Flask
-- Text generation: Google Gemini and optional OpenAI-compatible flow
-- Image generation: Google Gemini image generation
-- Export/render helpers: `html2canvas`
-
-## Project Layout
-
-```text
-comic-alpha/
-├── refer_image/ (optional, local built-in references)
-│   └── <style>/
-├── backend/
-│   ├── app.py
-│   ├── comic_generator.py
-│   ├── controllers/
-│   ├── services/
-│   ├── static/
-│   │   └── images/
-│   ├── pyproject.toml
-│   └── uv.lock
-├── frontend/
-│   ├── css/
-│   └── js/
-├── index.html
-├── start.sh
-├── pyproject.toml
-└── uv.lock
+```
+  ██████╗ ██████╗ ███╗   ███╗██╗ ██████╗██████╗  █████╗ ███████╗████████╗
+ ██╔════╝██╔═══██╗████╗ ████║██║██╔════╝██╔══██╗██╔══██╗██╔════╝╚══██╔══╝
+ ██║     ██║   ██║██╔████╔██║██║██║     ██████╔╝███████║█████╗     ██║   
+ ██║     ██║   ██║██║╚██╔╝██║██║██║     ██╔══██╗██╔══██║██╔══╝     ██║   
+ ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║╚██████╗██║  ██║██║  ██║██║        ██║   
+  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝  
 ```
 
-## Requirements
+**Turn your imagination into panels. One prompt at a time.**
 
-- Python 3.12+
-- `uv`
-- A Gemini API key
+<br/>
 
-Optional:
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+[![Flask](https://img.shields.io/badge/Flask-Backend-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Gemini](https://img.shields.io/badge/Powered_by-Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
 
-- OpenAI-compatible API access if you use the OpenAI text path
+<br/>
 
-## Quick Start
+[**Features**](#-features) &nbsp;·&nbsp; [**Quick Start**](#-quick-start) &nbsp;·&nbsp; [**How to Use**](#-how-to-use) &nbsp;·&nbsp; [**Architecture**](#-architecture) &nbsp;·&nbsp; [**Studio Guide**](#-mastering-consistency-with-my-studio)
 
-### Start With the Script
+<br/>
+
+<img src="assets/screenshot.png" alt="comiCraft Interface" width="800" style="border-radius: 12px;"/>
+
+<br/><br/>
+
+<video src="assets/demo.mp4" width="800" controls style="border-radius: 12px;">
+  Your browser does not support the video tag.
+</video>
+
+</div>
+
+---
+
+## What is comiCraft?
+
+**comiCraft** is a browser-based creative tool that transforms text prompts into fully-rendered, multi-page comic storyboards — powered by Google Gemini's multimodal generation. It's designed for writers, artists, and storytellers who want to visualize their ideas fast, without sacrificing visual consistency across pages.
+
+The core challenge in generative comics is **character drift** — your hero looks completely different by page 3. comiCraft solves this with **My Studio**, a consistency engine that locks character and environment references into every generation call, keeping your visual universe coherent from panel to panel.
+
+<br/>
+
+## ✨ Features
+
+| | Feature | Description |
+|---|---|---|
+| 📖 | **Storyboard Generation** | Instantly generate structured, multi-page comic layouts from a single text prompt |
+| 🎨 | **Page Rendering** | Render storyboard sketches into finished comic pages across multiple art styles |
+| 🎭 | **My Studio** | A consistency engine — save characters and environments as locked reference sheets |
+| 🔄 | **Story Continuation** | Append new pages to an existing session, keeping narrative and visual context intact |
+| 📚 | **Cover Creator** | Auto-generate a cover page derived from your current story's content |
+| 💾 | **Local Sessions** | Stories, Studio data, and settings persist in browser local storage — no account needed |
+| 🌐 | **Multilingual** | Generate stories and UI in multiple languages |
+
+<br/>
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Python 3.12+**
+- [`uv`](https://github.com/astral-sh/uv) — fast Python package manager
+- A **Google Gemini API Key**
+- *(Optional)* OpenAI-compatible API endpoint for the alternative text path
+
+### ⚡ One-Command Start
 
 ```bash
-chmod +x start.sh
-./start.sh
+chmod +x start.sh && ./start.sh
 ```
 
-This script:
+This script will:
+1. Install all backend dependencies via `uv`
+2. Start the **Flask backend** at `http://localhost:5003`
+3. Start the **frontend server** at `http://localhost:8000`
 
-- installs backend dependencies with `uv`
-- starts the Flask backend on `http://localhost:5003`
-- starts a simple frontend server on `http://localhost:8000`
+Then open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
-### Manual Start
+### 🛠️ Manual Setup
 
-Backend:
-
+**Terminal 1 — Backend:**
 ```bash
 cd backend
 uv sync
 uv run app.py
 ```
 
-Frontend:
-
+**Terminal 2 — Frontend:**
 ```bash
 python3 -m http.server 8000
 ```
 
-Then open:
+<br/>
 
-- Frontend: `http://localhost:8000`
-- Backend API: `http://localhost:5003`
+## ⚙️ Configuration
 
-## Configuration
+Click the **Config** panel inside the app to set:
 
-Open the config panel in the app and set:
+| Setting | Required | Description |
+|---|---|---|
+| `Gemini API Key` | ✅ Yes | Your Google Gemini key for text and image generation |
+| `Theme` | No | Light or dark mode |
+| `UI Language` | No | Interface display language |
+| `Story Language` | No | Language for generated comic scripts |
+| `Comic Style` | No | Default visual style applied during rendering |
 
-- `Gemini API Key`: required for generation
-- Theme
-- UI language
-- Story language
-- Comic style
+<br/>
 
-## Story Generation
+## 🕹️ How to Use
 
-### New Story
+### Creating a New Story
 
-- Write the prompt
-- Set `Pages`
-- Click `Run`
+```
+Write a prompt  →  Set Pages & Style  →  Click Run  →  Render Pages
+```
 
-### Continue Story
+1. Write your story prompt in the main text area
+2. Set the number of **Pages** and **Rows per Page**
+3. Choose a **Comic Style**
+4. Click **Run** — storyboard panels are generated
+5. Click **Render Page** or **Render All** to produce the final images
 
-- Generate a story first
-- Set `Pages` to how many pages to append
-- Click `Continue +N`
+### Continuing an Existing Story
 
-The app sends the latest story context to the backend and appends the new pages
-to the current session.
+1. After generating a story, adjust the **Pages** slider to your desired extension count
+2. Click **Continue +N**
+3. comiCraft synthesizes the existing narrative context and appends new pages seamlessly
 
-## Image Generation
+<br/>
 
-When rendering final comic pages, the app uses:
+## 🎭 Mastering Consistency with My Studio
 
-- the current page layout sketch
-- locked Studio character sheet
-- locked Studio environment sheet
-- active Studio item references
-- optional manual reference image
-- prior generated pages
+Character and environment drift is the hardest problem in multi-page AI comic generation. **My Studio** is built specifically to address this.
 
-This is the main consistency stack for keeping later pages aligned with saved
-characters and environments.
+```
+Save Characters & Styles
+        ↓
+Toggle Active Items
+        ↓
+Lock into Reference Sheets  ←─── The consistency layer
+        ↓
+Inject into Every Generation Call
+```
 
-## Sessions
+**How it works:**
 
-Sessions are stored in browser local storage and keep:
+- **Save** characters with names, descriptions, and reference images
+- **Save** art styles / environments the same way
+- **Toggle** which items are active for the current generation
+- When you render, active items are **merged into two locked reference sheets** — a Character Sheet and an Environment Sheet — which are injected as top-priority inputs into Gemini's image generation call
 
-- prompt
-- generated storyboard pages
-- generated page images
-- current page index
-- selected style/language/rows
-- active Studio usage metadata
+This significantly reduces panel-to-panel drift without requiring you to re-describe characters on every page.
 
-## Key API Endpoints
+**Additional controls:**
+- **Active/Inactive toggle** — include or exclude individual Studio items per generation
+- **Manual reference image** — inject a specific image during a single render for precise control
 
-- `GET /api/health`
-- `POST /api/generate`
-- `POST /api/generate-image`
-- `POST /api/generate-cover`
-- `POST /api/validate`
+<br/>
 
-## Notes
+## 🧩 Architecture
 
-- Generated page images are written under `backend/static/images/`
-- Studio data and sessions live in browser local storage
-- Missing built-in reference directories under `refer_image/<style>/` are not fatal (set `COMICCRAFT_REFER_IMAGE_BASE_PATH` to override)
-- Chrome may request `/.well-known/appspecific/com.chrome.devtools.json`; a 404 there is unrelated to app behavior
+```
+comiCraft/
+├── index.html              # App entry point
+├── start.sh                # One-command startup script
+├── pyproject.toml          # Root-level Python config
+├── uv.lock
+│
+├── frontend/
+│   ├── css/                # Stylesheets
+│   └── js/                 # App logic, Studio manager, session handler
+│
+├── backend/
+│   ├── app.py              # Flask application entry point
+│   ├── controllers/        # Route handlers (generate, render, cover, validate)
+│   ├── services/           # Business logic — Gemini integration, image pipeline
+│   └── static/images/      # Generated page images written here
+│
+└── refer_image/            # Optional built-in style references
+    └── <style>/
+```
 
-## Development Notes
+### Tech Stack
 
-Current notable product features:
+| Layer | Technology |
+|---|---|
+| Frontend | HTML · Vanilla CSS · Vanilla JavaScript |
+| Backend | Python 3.12+ · Flask |
+| Text Generation | Google Gemini *(+ optional OpenAI-compatible path)* |
+| Image Generation | Google Gemini Imagen |
+| Export Utility | `html2canvas` |
+| Package Management | `uv` |
 
-- Studio active/inactive toggles
-- Locked Studio sheets for stronger consistency
-- Continuation flow that appends pages
-- Cover generation from current story pages
+### Key API Endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/api/health` | Health check |
+| `POST` | `/api/generate` | Generate storyboard from prompt |
+| `POST` | `/api/generate-image` | Render a storyboard page to image |
+| `POST` | `/api/generate-cover` | Generate a comic cover |
+| `POST` | `/api/validate` | Validate API key and config |
+
+<br/>
+
+## 📝 Development Notes
+
+- Generated images are stored at `backend/static/images/` — clear periodically to free disk space
+- All session data and Studio items live in **browser local storage** — no backend persistence is required
+- Missing `refer_image/<style>/` directories are non-fatal; override the path with `COMICCRAFT_REFER_IMAGE_BASE_PATH`
+- Chrome may request `/.well-known/appspecific/com.chrome.devtools.json` — the resulting 404 is harmless and unrelated to app behavior
+
+<br/>
+

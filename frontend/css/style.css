@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;700&display=swap');
 
 /* Global Layout Styles */
 * {
@@ -2883,4 +2883,857 @@ button.loading .spinner {
     .studio-reference-box {
         min-height: 180px;
     }
+}
+
+/* ==========================================================================
+   CARTOONIC UI — Full Comic Book Design System
+   ========================================================================== */
+
+/* ── Colour tokens ─────────────────────────────────────────────────────── */
+:root {
+    /* Background */
+    --bg-paper: #FFF8EC;
+    --bg-gradient-start: #FFF8EC;
+    --bg-gradient-end:   #FFF0CC;
+    --dot-color: rgba(0,0,0,0.10);
+
+    /* Panel surfaces */
+    --container-bg:     #FFFFFF;
+    --panel-bg:         #FFFDF5;
+    --input-bg:         #FFFFFF;
+
+    /* Text */
+    --text-primary:   #1A1A1A;
+    --text-secondary: #555555;
+    --text-tertiary:  #888888;
+
+    /* Brand accent colours */
+    --color-yellow:  #FFD93D;
+    --color-red:     #FF4D4F;
+    --color-blue:    #4361EE;
+    --color-green:   #2DC653;
+    --color-purple:  #7B2FBE;
+    --color-orange:  #FF7F50;
+    --color-pink:    #FF6B9D;
+    --color-cyan:    #00B4D8;
+
+    /* Ink / neo-brutalism borders & shadows */
+    --ink: #1A1A1A;
+    --border-color:  #1A1A1A;
+    --panel-border:  #1A1A1A;
+    --config-border: #1A1A1A;
+    --border-width: 2.5px;
+    --container-shadow: #1A1A1A;
+    --hint-bg:    rgba(67,97,238,0.08);
+    --hint-border:rgba(67,97,238,0.25);
+    --config-bg:  rgba(67,97,238,0.06);
+    --ai-section-bg: rgba(0,0,0,0.03);
+    --disabled-bg:   #E0E0E0;
+    --disabled-text: #AAAAAA;
+    --error-bg: rgba(255,77,79,0.10);
+
+    /* Shadows */
+    --neo-shadow:    5px 5px 0 var(--ink);
+    --neo-shadow-sm: 3px 3px 0 var(--ink);
+    --neo-shadow-xs: 2px 2px 0 var(--ink);
+    --scrollbar-thumb: rgba(0,0,0,0.25);
+    --scrollbar-thumb-hover: rgba(0,0,0,0.40);
+}
+
+[data-theme="dark"] {
+    --bg-paper: #1C1A2E;
+    --bg-gradient-start: #1C1A2E;
+    --bg-gradient-end:   #12101F;
+    --dot-color: rgba(255,255,255,0.07);
+
+    --container-bg:  #272540;
+    --panel-bg:      #1E1C34;
+    --input-bg:      #242238;
+
+    --text-primary:   #F0EEF8;
+    --text-secondary: #B0AACC;
+    --text-tertiary:  #7A7598;
+
+    --ink: #E0DEFF;
+    --border-color:  #E0DEFF;
+    --panel-border:  #E0DEFF;
+    --config-border: #E0DEFF;
+    --hint-bg:    rgba(99,120,255,0.15);
+    --hint-border:rgba(99,120,255,0.35);
+    --config-bg:  rgba(99,120,255,0.12);
+    --ai-section-bg: rgba(255,255,255,0.05);
+    --disabled-bg:   #3A3850;
+    --disabled-text: #6A6890;
+    --error-bg: rgba(255,100,100,0.15);
+
+    --neo-shadow:    5px 5px 0 rgba(0,0,0,0.6);
+    --neo-shadow-sm: 3px 3px 0 rgba(0,0,0,0.5);
+    --neo-shadow-xs: 2px 2px 0 rgba(0,0,0,0.4);
+    --scrollbar-thumb: rgba(255,255,255,0.18);
+    --scrollbar-thumb-hover: rgba(255,255,255,0.30);
+
+    --color-yellow: #FFD93D;
+    --color-blue:   #637EF7;
+}
+
+/* ── Body — Halftone Paper ─────────────────────────────────────────────── */
+body {
+    font-family: 'Nunito', 'Quicksand', system-ui, sans-serif;
+    background-color: var(--bg-paper) !important;
+    background-image:
+        radial-gradient(var(--dot-color) 1.8px, transparent 1.8px),
+        radial-gradient(var(--dot-color) 1.8px, transparent 1.8px) !important;
+    background-size: 28px 28px !important;
+    background-position: 0 0, 14px 14px !important;
+    transition: background 0.3s ease;
+}
+
+/* ── App title — BANGERS comic font ───────────────────────────────────── */
+.editor-container h3[data-i18n="appName"] {
+    font-family: 'Bangers', cursive !important;
+    font-size: 32px !important;
+    letter-spacing: 2px !important;
+    color: var(--color-blue) !important;
+    text-shadow: 2px 2px 0 var(--ink) !important;
+    -webkit-text-stroke: 0 !important;
+}
+
+/* ── Editor container panel ────────────────────────────────────────────── */
+.editor-container {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow) !important;
+    border-radius: 20px !important;
+    background: var(--container-bg) !important;
+}
+
+/* ── Preview container ─────────────────────────────────────────────────── */
+.preview-container.has-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow) !important;
+    border-radius: 20px 20px 0 0 !important;
+    background: var(--container-bg) !important;
+}
+
+/* ── All buttons — comic book style ────────────────────────────────────── */
+button {
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 800 !important;
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-radius: 12px !important;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.1s ease !important;
+}
+
+button:hover:not(:disabled) {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 5px 5px 0 var(--ink) !important;
+    filter: brightness(1.06) !important;
+}
+
+button:active:not(:disabled) {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 1px 1px 0 var(--ink) !important;
+    filter: none !important;
+}
+
+button:disabled {
+    transform: none !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    opacity: 0.55 !important;
+}
+
+/* ── Inputs & selects ──────────────────────────────────────────────────── */
+input, select, textarea {
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 600 !important;
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 10px !important;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-color: var(--color-blue) !important;
+}
+
+/* Only lift inputs/selects on focus — NOT textareas, whose overlay highlight layer
+   cannot follow a CSS transform and would misalign if the textarea shifts. */
+input:focus, select:focus {
+    transform: translate(-1px, -1px) !important;
+}
+
+/* ── Icon buttons ──────────────────────────────────────────────────────── */
+.icon-btn, .session-action-icon-btn {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 10px !important;
+    background: var(--panel-bg) !important;
+    color: var(--text-primary) !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.icon-btn:hover, .session-action-icon-btn:hover {
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0 var(--ink) !important;
+    filter: brightness(1.05) !important;
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+}
+
+.studio-btn:hover {
+    background: var(--color-pink) !important;
+    color: #fff !important;
+}
+
+/* ── Run / Generate button ─────────────────────────────────────────────── */
+.prompt-wrapper .run-btn {
+    background: var(--color-blue) !important;
+    color: #fff !important;
+    font-family: 'Bangers', cursive !important;
+    font-size: 16px !important;
+    letter-spacing: 1px !important;
+    height: 36px !important;
+    min-width: 80px !important;
+    border-radius: 12px !important;
+}
+
+.prompt-wrapper .run-btn:hover:not(:disabled) {
+    background: #2b50d6 !important;
+}
+
+.prompt-wrapper .continue-btn {
+    background: var(--color-green) !important;
+}
+
+.prompt-wrapper .continue-btn:hover:not(:disabled) {
+    background: #21a844 !important;
+}
+
+/* shortcut hint inside run btn */
+.prompt-wrapper .run-btn .shortcut-hint {
+    background: rgba(255,255,255,0.2) !important;
+    border-radius: 5px !important;
+    font-size: 10px !important;
+}
+
+/* ── Magic wand / optimize btn ──────────────────────────────────────────── */
+.prompt-wrapper .optimize-btn {
+    background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-pink) 100%) !important;
+    border-radius: 12px !important;
+}
+
+/* ── Secondary chip buttons ────────────────────────────────────────────── */
+.prompt-wrapper .render-btn,
+.prompt-wrapper .generate-all-btn,
+.prompt-wrapper .generate-cover-btn,
+.prompt-wrapper .toggle-view-btn {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+}
+
+/* ── Save config button ─────────────────────────────────────────────────── */
+.save-config-btn {
+    background: var(--color-green) !important;
+    border-color: var(--ink) !important;
+}
+
+.save-config-btn:hover:not(:disabled) {
+    background: #21a844 !important;
+}
+
+/* ── Comic page container ───────────────────────────────────────────────── */
+#comic-page {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow) !important;
+    border-radius: 18px !important;
+    background: var(--panel-bg) !important;
+}
+
+/* ── Comic title banner ─────────────────────────────────────────────────── */
+.comic-title {
+    font-family: 'Bangers', cursive !important;
+    letter-spacing: 2px !important;
+    font-size: 20px !important;
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 10px !important;
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+}
+
+[data-theme="dark"] .comic-title {
+    background: var(--color-orange) !important;
+    color: #fff !important;
+}
+
+/* ── Comic panels ───────────────────────────────────────────────────────── */
+.comic-panel {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 12px !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    background: var(--panel-bg) !important;
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out !important;
+}
+
+.comic-panel:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-color: var(--color-blue) !important;
+}
+
+.comic-panel:focus {
+    transform: translate(-1px, -1px) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-color: var(--color-blue) !important;
+    background: var(--input-bg) !important;
+    outline: none !important;
+}
+
+/* ── AI section & config panel ──────────────────────────────────────────── */
+.ai-section {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 14px !important;
+    background: var(--ai-section-bg) !important;
+}
+
+.config-panel {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 14px !important;
+}
+
+/* ── Step items in empty state ──────────────────────────────────────────── */
+.step-item {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 20px !important;
+    background: var(--panel-bg) !important;
+}
+
+.step-num {
+    background: var(--color-blue) !important;
+    color: #fff !important;
+    font-family: 'Bangers', cursive !important;
+    font-size: 14px !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────── */
+.empty-state-title {
+    font-family: 'Bangers', cursive !important;
+    font-size: 36px !important;
+    letter-spacing: 2px !important;
+    color: var(--color-blue) !important;
+    text-shadow: 2px 2px 0 var(--ink) !important;
+}
+
+.empty-state-icon {
+    color: var(--color-blue) !important;
+    opacity: 1 !important;
+}
+
+.empty-state-icon svg {
+    filter: drop-shadow(2px 2px 0 var(--ink));
+}
+
+.example-prompt {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 20px !important;
+    font-weight: 700 !important;
+    background: var(--panel-bg) !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.example-prompt:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 4px 4px 0 var(--ink) !important;
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+    border-color: var(--ink) !important;
+}
+
+/* ── Page navigation buttons ────────────────────────────────────────────── */
+.nav-btn {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.nav-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 5px 5px 0 var(--ink) !important;
+    background: var(--color-blue) !important;
+    color: #fff !important;
+}
+
+.nav-btn:active:not(:disabled) {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 1px 1px 0 var(--ink) !important;
+}
+
+.nav-btn:disabled {
+    opacity: 0.35 !important;
+    background: var(--panel-bg) !important;
+    transform: none !important;
+    box-shadow: 1px 1px 0 var(--ink) !important;
+}
+
+.page-nav-indicator {
+    font-family: 'Bangers', cursive !important;
+    font-size: 17px !important;
+    letter-spacing: 1px !important;
+    color: var(--text-primary) !important;
+}
+
+/* ── Prompt section at bottom ───────────────────────────────────────────── */
+.prompt-section-fixed {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: var(--border-width) solid var(--ink) !important;
+    border-bottom: none !important;
+    box-shadow: 0 -3px 0 var(--ink), -3px 0 0 var(--ink), 3px 0 0 var(--ink) !important;
+    border-radius: 16px 16px 0 0 !important;
+    background: var(--container-bg) !important;
+}
+
+/* ── Toast notifications ────────────────────────────────────────────────── */
+.toast {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-radius: 12px !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 800 !important;
+}
+
+/* ── Modal ──────────────────────────────────────────────────────────────── */
+.modal-content {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow) !important;
+    border-radius: 20px !important;
+    background: var(--container-bg) !important;
+}
+
+.modal-header {
+    border-bottom: var(--border-width) solid var(--ink) !important;
+}
+
+.modal-header h3 {
+    font-family: 'Bangers', cursive !important;
+    font-size: 22px !important;
+    letter-spacing: 1.5px !important;
+    color: var(--color-blue) !important;
+}
+
+.modal-close-btn {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 8px !important;
+    background: var(--panel-bg) !important;
+    font-weight: 900 !important;
+}
+
+.modal-close-btn:hover {
+    background: var(--color-red) !important;
+    color: #fff !important;
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+/* ── Session selector ───────────────────────────────────────────────────── */
+.session-selector-large {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+}
+
+/* ── Session item cards ─────────────────────────────────────────────────── */
+.session-item {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-radius: 12px !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.session-item:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 5px 5px 0 var(--ink) !important;
+}
+
+.session-item.active {
+    border-color: var(--color-blue) !important;
+    background: rgba(67,97,238,0.06) !important;
+}
+
+.session-action-btn {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.session-action-btn:hover {
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+.session-action-btn.primary {
+    background: var(--color-blue) !important;
+    border-color: var(--ink) !important;
+}
+
+.session-action-btn.delete:hover {
+    background: var(--color-red) !important;
+    color: #fff !important;
+    border-color: var(--ink) !important;
+}
+
+/* ── Studio modal ───────────────────────────────────────────────────────── */
+.studio-tabs {
+    border-bottom: var(--border-width) solid var(--ink) !important;
+}
+
+.studio-tab {
+    border: 2px solid transparent !important;
+    box-shadow: none !important;
+    border-radius: 12px 12px 0 0 !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 800 !important;
+    transition: background 0.15s !important;
+}
+
+.studio-tab:hover {
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.studio-tab.active {
+    background: var(--color-blue) !important;
+    color: #fff !important;
+    border-color: var(--ink) !important;
+}
+
+.studio-tab.active::after {
+    background: transparent !important;
+}
+
+.studio-add-btn {
+    background: rgba(67,97,238,0.1) !important;
+    color: var(--color-blue) !important;
+    border: 2px dashed var(--ink) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    font-weight: 800 !important;
+}
+
+.studio-add-btn:hover {
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+    border-style: solid !important;
+}
+
+.studio-card {
+    border: 2px solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-radius: 16px !important;
+    background: var(--panel-bg) !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.studio-card:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: var(--neo-shadow) !important;
+}
+
+.studio-save-btn {
+    background: var(--color-green) !important;
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    border-radius: 12px !important;
+    font-weight: 800 !important;
+}
+
+.studio-save-btn:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: var(--neo-shadow) !important;
+    filter: brightness(1.05) !important;
+}
+
+.studio-reference-box {
+    border: 2px dashed var(--ink) !important;
+    border-radius: 14px !important;
+    background: var(--ai-section-bg) !important;
+}
+
+.studio-reference-box:hover {
+    border-style: solid !important;
+    border-color: var(--color-blue) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+}
+
+.studio-action-btn.primary {
+    background: var(--color-blue) !important;
+    border: 2px solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+}
+
+/* ── Error message ──────────────────────────────────────────────────────── */
+.error {
+    border-left: 4px solid var(--color-red) !important;
+    font-weight: 700 !important;
+}
+
+/* ── Cover custom panel ─────────────────────────────────────────────────── */
+.cover-custom-panel {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow) !important;
+    border-radius: 14px !important;
+    background: var(--container-bg) !important;
+}
+
+.cover-custom-btn.generate {
+    background: var(--color-blue) !important;
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 10px !important;
+    font-weight: 800 !important;
+}
+
+.cover-custom-btn.cancel {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+}
+
+/* ── Theme toggle button ────────────────────────────────────────────────── */
+.theme-toggle-btn {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0 var(--ink) !important;
+}
+
+/* ── Language select ────────────────────────────────────────────────────── */
+.language-select {
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    font-weight: 700 !important;
+}
+
+/* ── AI status text ─────────────────────────────────────────────────────── */
+#ai-status {
+    font-weight: 700 !important;
+    border: 2px solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 10px !important;
+}
+
+/* ── Generated comic image ──────────────────────────────────────────────── */
+.generated-comic-image {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow) !important;
+    border-radius: 14px !important;
+}
+
+/* ── Page toolbar buttons ───────────────────────────────────────────────── */
+.toolbar-btn {
+    border: var(--border-width) solid var(--ink) !important;
+    box-shadow: var(--neo-shadow-xs) !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px) !important;
+    box-shadow: var(--neo-shadow-sm) !important;
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+    border-color: var(--ink) !important;
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-blue); }
+
+/* ── Animated pop for app name ──────────────────────────────────────────── */
+@keyframes comic-pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.12) rotate(-2deg); }
+    70%  { transform: scale(0.96) rotate(1deg); }
+    100% { transform: scale(1); }
+}
+
+.editor-container h3[data-i18n="appName"]:hover {
+    animation: comic-pop 0.4s ease forwards;
+    cursor: pointer;
+}
+
+/* ── Consistency badge on Studio items ──────────────────────────────────── */
+.studio-consistency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-green);
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    box-shadow: 1px 1px 0 var(--ink);
+}
+
+/* ── Comic-style "panel index" badge ────────────────────────────────────── */
+.comic-panel::before {
+    content: attr(data-panel-index);
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-family: 'Bangers', cursive;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    opacity: 0.5;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+}
+
+/* ── Halftone header stripe on editor ───────────────────────────────────── */
+.header-row {
+    padding-bottom: 14px !important;
+    border-bottom: var(--border-width) solid var(--ink) !important;
+    margin-bottom: 16px !important;
+}
+
+/* ── Step arrow between steps ───────────────────────────────────────────── */
+.step-arrow {
+    font-family: 'Bangers', cursive !important;
+    font-size: 22px !important;
+    color: var(--color-blue) !important;
+    opacity: 1 !important;
+}
+
+/* ── Examples label ─────────────────────────────────────────────────────── */
+.examples-label {
+    font-family: 'Bangers', cursive !important;
+    font-size: 14px !important;
+    letter-spacing: 1.5px !important;
+    color: var(--text-secondary) !important;
+}
+
+/* ── Config section label ───────────────────────────────────────────────── */
+.config-panel h4 {
+    font-family: 'Bangers', cursive !important;
+    font-size: 18px !important;
+    letter-spacing: 1.5px !important;
+    color: var(--color-blue) !important;
+}
+
+/* ── AI section labels ──────────────────────────────────────────────────── */
+.ai-section .flex-row label {
+    font-weight: 800 !important;
+}
+
+/* ── Studio image placeholder text ─────────────────────────────────────── */
+.studio-image-placeholder-title {
+    font-family: 'Bangers', cursive !important;
+    font-size: 18px !important;
+    letter-spacing: 1px !important;
+}
+
+/* ── Dark-mode text fixes ───────────────────────────────────────────────── */
+[data-theme="dark"] .comic-title {
+    color: #fff !important;
+}
+
+[data-theme="dark"] .nav-btn {
+    background: #2b2950 !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .nav-btn:hover:not(:disabled) {
+    background: var(--color-blue) !important;
+    color: #fff !important;
+}
+
+/* ── Ensure overlay download button still has ink border ─────────────────── */
+.overlay-download-btn {
+    border: 2px solid rgba(255,255,255,0.4) !important;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.4) !important;
+}
+
+/* ── Studio back button ─────────────────────────────────────────────────── */
+.studio-back-btn {
+    font-weight: 800 !important;
+    color: var(--color-blue) !important;
+    border: 2px solid var(--ink) !important;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    border-radius: 8px !important;
+    padding: 4px 12px !important;
+    transition: transform 0.08s, box-shadow 0.08s !important;
+}
+
+.studio-back-btn:hover {
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0 var(--ink) !important;
+    background: var(--color-yellow) !important;
+    color: var(--ink) !important;
+}
+
+/* ── Prompt highlight layer — must exactly match textarea border/weight ── */
+/* The textarea gets border: var(--border-width) solid var(--ink) + font-weight:600
+   via the global input/textarea override. The highlight layer (a div) needs the
+   same values or the text positions will drift and highlights will misalign.
+   Also: textareas must NEVER get a CSS transform on focus — the overlay div
+   cannot follow a transform and the two layers would visually separate.         */
+.prompt-wrapper #prompt-highlight-layer {
+    border: var(--border-width) solid transparent !important;
+    font-weight: 600 !important;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.prompt-wrapper #prompt-input {
+    font-weight: 600 !important;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    transform: none !important;   /* lock out any transform — overlay must stay aligned */
+}
+
+/* ── Studio mention highlight — bright cartoonish yellow pill ─────────── */
+.studio-mention {
+    background-color: var(--color-yellow) !important;
+    color: transparent !important;          /* text stays transparent (overlay layer) */
+    border-radius: 4px !important;
+    outline: 1.5px solid var(--ink) !important;
+    padding: 0 2px !important;
 }

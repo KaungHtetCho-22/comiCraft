@@ -4,7 +4,7 @@ import glob
 import logging
 import requests
 from typing import List, Dict, Any, Optional, Union, Tuple
-from comic_generator import generate_social_media_image_core
+from comic_generator import generate_comic_image_core
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +16,25 @@ class ImageService:
     # Defaults to `refer_image/` so the app does not depend on a removed `assets/` folder.
     # Set COMICCRAFT_REFER_IMAGE_BASE_PATH to override (e.g. "refer_image" or "/abs/path").
     REFER_IMAGE_BASE_PATH = os.getenv("COMICCRAFT_REFER_IMAGE_BASE_PATH", "refer_image")
+    
+    STYLE_DESCRIPTIONS = {
+        "doraemon": "Doraemon anime style: rounded cute character designs, clean simple linework, warm and humorous atmosphere, pastel color palette, expressive chibi-like proportions",
+        "american": "Classic American comic style: bold ink outlines, strong dramatic shadows (hatching), heroic proportions, high-contrast color fills, dynamic action compositions, bold speech bubbles",
+        "watercolor": "Watercolor illustration style: soft color washes and bleeds, visible brushstrokes, dreamy atmospheric haze, gentle color transitions, painterly loose linework",
+        "disney": "Disney animation art style: smooth fluid lines, highly expressive exaggerated faces, graceful movement, warm vibrant colors, magical whimsical atmosphere (art style only)",
+        "ghibli": "Studio Ghibli art style: detailed lush nature backgrounds, soft warm color palette, imaginative fantastical elements, nuanced character expressions, poetic and healing atmosphere (art style only)",
+        "pixar": "Pixar CGI animation style: three-dimensional rounded character forms, rich subsurface lighting, detailed material textures, expressive large eyes, heartfelt emotional storytelling (art style only)",
+        "shonen": "Japanese shonen manga style: dynamic speed lines, exaggerated expressions and poses, high-energy action compositions, strong visual impact, fast-paced panel cuts, bold sound-effect lettering",
+        "tom_and_jerry": "Tom and Jerry classic cartoon style: 1950s hand-drawn 2D animation, extremely exaggerated physical comedy, elastic rubbery character motion, slapstick chase energy, bright saturated colors",
+        "manga": "Classic black-and-white manga style: crisp ink linework, screen tone shading, expressive emotive faces with large eyes, dramatic perspective foreshortening, clean panel compositions, manga-style sound effects",
+        "noir": "Film noir comic style: stark black and white with deep shadows, heavy cross-hatching, dramatic chiaroscuro lighting, moody rain-slicked city environments, hard-boiled detective atmosphere, cigarette smoke and silhouettes",
+        "superhero": "American superhero comic style: bold dynamic anatomy, dramatic hero poses, explosive action lines, vivid primary colors, dramatic low-angle shots, halftone dot printing texture, bold impact lettering",
+        "vintage": "Vintage newspaper comic style: 1940s-1960s aesthetic, simple clean linework, limited muted color palette, newspaper print texture, classic panel borders, nostalgic editorial cartoon feel",
+        "kawaii": "Japanese kawaii cute style: pastel rainbow colors, tiny simplified character features, oversized heads and eyes, rosy cheek blushes, sparkles and star decorations, bubbly soft rounded shapes",
+        "cyberpunk": "Cyberpunk comic style: neon glow effects on dark backgrounds, rain-drenched futuristic cityscapes, glitch digital art overlays, high-tech low-life aesthetic, chrome and neon color palette, dramatic neon-lit character portraits",
+        "european": "European ligne claire style (Tintin/Asterix): clean uniform ink outlines, flat solid color fills, no shading gradients, clear readable compositions, expressive but grounded character designs, detailed architectural backgrounds",
+        "chibi": "Super-deformed chibi style: extreme 2-3 head-tall proportions, oversized round heads, tiny bodies, dot or star eyes when flustered, exaggerated cute reactions, soft pastel color palette, comedy-focused expressions",
+    }
 
     @staticmethod
     def get_style_reference_images(comic_style: str) -> List[Tuple[str, str]]:
@@ -100,7 +119,7 @@ class ImageService:
         reference_images = []
 
         for char_name, img_path in style_references:
-            character_info.append((char_name, img_path))
+            character_info.append((char_name, "", img_path))
             reference_images.append({
                 "type": "built_in_style_character",
                 "name": char_name,
@@ -131,39 +150,49 @@ class ImageService:
                     reference_images.append({"type": "previous_page", "imageUrl": prev_page})
 
         # Separate reference categories for stronger prompting.
-        for ref in reference_images:
+        previous_page_info = []
+        character_info = [] # Reset to prevent duplicates, we rebuild it from reference_images
+        style_environment_info = []
+        character_sheet_info = []
+        
+        for idx_0based, ref in enumerate(reference_images):
+            idx = idx_0based + 1
             ref_type = ref.get("type", "")
             if ref_type in {"studio_character", "built_in_style_character"}:
-                character_info.append((ref.get("name", "Character"), ref.get("imageUrl", "")))
+                character_info.append((ref.get("name", "Character"), ref.get("description", ""), idx))
             elif ref_type == "locked_character_sheet":
                 character_sheet_info.append((
                     ref.get("name", "Locked Character Sheet"),
                     ref.get("description", ""),
-                    ref.get("imageUrl", "")
+                    idx
                 ))
             elif ref_type == "studio_style":
                 style_environment_info.append((
                     ref.get("name", "Art Style"),
                     ref.get("description", ""),
-                    ref.get("imageUrl", "")
+                    idx
                 ))
             elif ref_type == "locked_style_sheet":
                 style_environment_info.append((
                     ref.get("name", "Locked Environment Sheet"),
                     ref.get("description", ""),
-                    ref.get("imageUrl", "")
+                    idx
                 ))
+            elif ref_type == "previous_page":
+                page_label = ref.get("name") or ref.get("pageTitle") or f"Page {len(previous_page_info) + 1}"
+                previous_page_info.append((page_label, idx))
 
         # Convert page data to prompt with style, character references, and style environment references
         prompt = ImageService._convert_page_to_prompt(
-            page_data, comic_style, language, character_info, style_environment_info, character_sheet_info
+            page_data, comic_style, language, character_info, style_environment_info, character_sheet_info,
+            previous_page_info
         )
 
         # Use reference_images if we have any, otherwise None
         final_reference = reference_images if reference_images else None
         
         # Generate image
-        image_url = generate_social_media_image_core(
+        image_url = generate_comic_image_core(
             prompt=prompt,
             reference_img=final_reference,
             google_api_key=google_api_key
@@ -197,8 +226,8 @@ class ImageService:
         character_info = []
         style_ref_paths = []
 
-        for char_name, img_path in style_references:
-            character_info.append((char_name, img_path))
+        for i, (char_name, img_path) in enumerate(style_references):
+            character_info.append((char_name, "", i + 1))
             style_ref_paths.append(img_path)
 
         # Create cover prompt with character references
@@ -220,7 +249,7 @@ class ImageService:
                 elif isinstance(img, str):
                     processed_refs.append(img)
 
-        image_url = generate_social_media_image_core(
+        image_url = generate_comic_image_core(
             prompt=prompt,
             reference_img=processed_refs,
             google_api_key=google_api_key
@@ -252,20 +281,12 @@ class ImageService:
         page_data: Dict[str, Any],
         comic_style: str = 'doraemon',
         language: str = 'en',
-        character_info: Optional[List[Tuple[str, str]]] = None,
-        style_environment_info: Optional[List[Tuple[str, str, str]]] = None,
-        character_sheet_info: Optional[List[Tuple[str, str, str]]] = None
+        character_info: Optional[List[Tuple[str, str, int]]] = None,
+        style_environment_info: Optional[List[Tuple[str, str, int]]] = None,
+        character_sheet_info: Optional[List[Tuple[str, str, int]]] = None,
+        previous_page_info: Optional[List[Tuple[str, int]]] = None
     ) -> str:
-        """Convert page data to image generation prompt
-
-        Args:
-            page_data: Comic page data with rows and panels
-            comic_style: Style of the comic
-            language: Language code
-            character_info: List of (character_name, image_path) tuples for reference
-            style_environment_info: List of (style_name, description, image_path) tuples for reference
-            character_sheet_info: List of (sheet_name, description, image_path) tuples for reference
-        """
+        """Convert page data to image generation prompt"""
         import json
 
         # Build layout description and panel content
@@ -290,63 +311,76 @@ class ImageService:
         }
         target_lang = language_map.get(language, 'English')
 
-        # Build character reference section if available
+        # Get style description
+        style_desc = ImageService.STYLE_DESCRIPTIONS.get(comic_style, f"a {comic_style} animation style")
+
+        # Build sections
         character_ref_section = ""
         if character_info and len(character_info) > 0:
-            char_descriptions = []
-            for idx, (char_name, _) in enumerate(character_info, 1):
-                char_descriptions.append(f"  - Reference image #{idx}: Character named '{char_name}'")
-            character_ref_section = """
-
-## Character Reference Images
+            char_entries = []
+            for char_name, char_desc, img_idx in character_info:
+                entry = f"  - Reference image #{img_idx}: Character named '{char_name}'"
+                if char_desc:
+                    entry += f" — visual description: {char_desc}"
+                char_entries.append(entry)
+            
+            character_ref_section = f"""
+## Character Reference Images (SOURCE OF TRUTH)
 The following reference images are provided to show what specific characters look like.
-You MUST draw these characters exactly as shown in their reference images:
-{char_list}
+You MUST draw these characters EXACTLY as shown in their reference images:
+{chr(10).join(char_entries)}
 
-IMPORTANT: When any of these characters appear in the comic panels, you MUST use their exact appearance from the reference images - same face, hair, clothing, and style.""".format(
-                char_list="\n".join(char_descriptions)
-            )
+IMPORTANT: These references are the absolute source of truth for character design. Even when applying the {comic_style} style, you MUST preserve the core features, hair, clothing, and proportions shown in these references. Do NOT let the style override their unique identity."""
 
         character_sheet_section = ""
         if character_sheet_info and len(character_sheet_info) > 0:
-            sheet_descriptions = []
-            for idx, (sheet_name, sheet_desc, _) in enumerate(character_sheet_info, 1):
-                summary = f"  - Locked sheet #{idx}: '{sheet_name}'"
+            sheet_entries = []
+            for sheet_name, sheet_desc, img_idx in character_sheet_info:
+                summary = f"  - Reference image #{img_idx}: Locked character sheet '{sheet_name}'"
                 if sheet_desc:
                     summary += f" described as '{sheet_desc}'"
-                sheet_descriptions.append(summary)
-            character_sheet_section = """
-
-## Locked Character Sheet References
+                sheet_entries.append(summary)
+            
+            character_sheet_section = f"""
+## Locked Character Sheets
 The following reference images are locked character sheets that define the final approved look for the active cast.
-You MUST treat these sheets as the highest-priority visual source for the characters on this page:
-{sheet_list}
+You MUST treat these sheets as the highest-priority visual source:
+{chr(10).join(sheet_entries)}
 
-IMPORTANT: Preserve the exact face shape, body proportions, clothing, accessories, and silhouette shown in these locked character sheets throughout every panel.""".format(
-                sheet_list="\n".join(sheet_descriptions)
-            )
+IMPORTANT: Preserve the exact face shape, body proportions, clothing, and accessories shown in these sheets throughout every panel."""
 
         style_ref_section = ""
         if style_environment_info and len(style_environment_info) > 0:
-            style_descriptions = []
-            for idx, (style_name, style_desc, _) in enumerate(style_environment_info, 1):
-                summary = f"  - Reference image #{idx}: Style/environment named '{style_name}'"
-                if style_desc:
-                    summary += f" described as '{style_desc}'"
-                style_descriptions.append(summary)
-            style_ref_section = """
+            style_entries = []
+            for style_name, style_desc_val, img_idx in style_environment_info:
+                summary = f"  - Reference image #{img_idx}: Art Style named '{style_name}'"
+                if style_desc_val:
+                    summary += f" described as '{style_desc_val}'"
+                style_entries.append(summary)
+            
+            style_ref_section = f"""
+## Art Style And Aesthetic References
+The following reference images define the RENDERING STYLE and aesthetic.
+You MUST apply this exact aesthetic to every panel:
+{chr(10).join(style_entries)}
 
-## Art Style And Environment Reference Images
-The following reference images define the visual world, environment, background language, and mood.
-You MUST preserve these references consistently across the full page:
-{style_list}
+IMPORTANT: Use the SAME artistic rendering technique, line weight, and color grading shown in these style references universially."""
 
-IMPORTANT: Match the environment, architecture, color palette, brushwork, lighting mood, and scenic identity from these style references. Keep the setting visually consistent with them in every panel.""".format(
-                style_list="\n".join(style_descriptions)
-            )
+        previous_page_section = ""
+        if previous_page_info and len(previous_page_info) > 0:
+            page_labels = [f"  - Reference image #{img_idx}: Previous page reference '{label}'" for label, img_idx in previous_page_info]
+            
+            previous_page_section = f"""
+## Previous Page Consistency References
+The following reference images represent earlier pages from this story. 
+You MUST use these as your primary reference for the visual "engine" of the comic: line weight, shading style, color saturation, and background detail level.
+{chr(10).join(page_labels)}
 
-        # Main prompt content
-        prompt_content = """Using the style of {comic_style}, create a comic page. All text in the comic, including titles and speech bubbles, MUST be in {target_lang}.
+CRITICAL: Match the exact artistic rendering seen in these previous pages to ensure all pages look like they were drawn by the same artist in a single session.
+HOWEVER: For the characters' anatomical details, priority remains with the high-quality character references above (Image #1, #2, etc.)."""
+
+        # Main prompt construction
+        prompt_content = f"""Using the specific art style described as: {style_desc}, create a high-quality comic page. You MUST maintain perfect visual consistency with any previous pages provided. All text in the comic, including titles and speech bubbles, MUST be in {target_lang}.
 
 # Page Layout (MUST FOLLOW EXACTLY):
 {layout_description}
@@ -354,87 +388,59 @@ IMPORTANT: Match the environment, architecture, color palette, brushwork, lighti
 # Content:
 
 ## Title
-{title}
+{page_data.get('title', '')}
 
 ## Panel Details
-{panels}{character_ref_section}{character_sheet_section}{style_ref_section}"""
+{"\n".join(panels)}
+{character_ref_section}
+{character_sheet_section}
+{style_ref_section}
+{previous_page_section}"""
 
-        # Build character reference requirement if available
-        char_ref_requirement = ""
-        if character_info and len(character_info) > 0:
-            char_names = [name for name, _ in character_info]
-            char_ref_requirement = f"""
-- Character Reference Images: The first {len(character_info)} provided image(s) are character reference images showing what specific characters look like. When drawing characters named {', '.join(char_names)}, you MUST match their appearance exactly as shown in these reference images."""
+        # Build requirements list
+        char_ref_req = ""
+        if character_info:
+            char_refs = [str(i) for _, _, i in character_info]
+            char_ref_req = f"\n- MANDATORY CHARACTER DESIGN: Follow reference images {', '.join(char_refs)} exactly for character appearances."
 
-        character_sheet_requirement = ""
-        if character_sheet_info and len(character_sheet_info) > 0:
-            sheet_names = [name for name, _, _ in character_sheet_info]
-            character_sheet_requirement = f"""
-- Locked Character Sheets: The locked character sheet reference images are the highest-priority source for approved character appearance. You MUST keep the cast visually identical to the locked sheets: {', '.join(sheet_names)}."""
+        sheet_ref_req = ""
+        if character_sheet_info:
+            sheet_refs = [str(i) for _, _, i in character_sheet_info]
+            sheet_ref_req = f"\n- CHARACTER SHEET PRIORITY: Follow locked sheets {', '.join(sheet_refs)} as the primary source for character traits."
 
-        style_ref_requirement = ""
-        if style_environment_info and len(style_environment_info) > 0:
-            style_names = [name for name, _, _ in style_environment_info]
-            style_ref_requirement = f"""
-- Art Style And Environment Reference Images: The provided style reference image(s) define the world and background treatment for this comic page. You MUST keep the environment, landscape, buildings, colors, and mood consistent with {', '.join(style_names)}."""
+        style_ref_req = ""
+        if style_environment_info:
+            style_refs = [str(i) for _, _, i in style_environment_info]
+            style_ref_req = f"\n- STYLE ADHERENCE: Use style reference images {', '.join(style_refs)} for the rendering aesthetic."
 
-        # Requirements section (positive guidance only)
-        requirements_content = """- **LAYOUT (CRITICAL)**: You MUST strictly follow the page layout specified above. If Row 1 has 1 panel, draw 1 panel in the first row. If Row 2 has 2 panels, draw 2 panels side by side in the second row. Do NOT change the number of rows or panels per row.
-- Maintain consistency in characters and scenes.
-- The image should be colorful and vibrant.
-- Include speech bubbles with short, clear dialogue to help tell the story.
-- Ensure text is legible and spelled correctly.
-- All dialogue and titles MUST be in {target_lang}.
-- Display the title only once, typically at the top center of the comic page.
-- Maintain consistent and uniform margins around the entire comic page.
-- Ensure equal spacing on all sides (top, bottom, left, right) for a professional appearance.
-- The comic title should use a {comic_style}-style font that matches the overall comic aesthetic.
-- Use fonts that properly support {target_lang} characters.
-- Ensure all text is correctly encoded and displayed clearly.
-- Text should be clear, sharp, and properly rendered in both speech bubbles and titles.
-- Character Consistency: Use the provided reference images as the definitive source for character appearances. Carry over the exact facial features, hair styles, and identical clothing/outfits.
-- Environment Consistency: Use the provided style/environment reference images as the definitive source for world design, scenery, color treatment, and atmosphere. Preserve that background identity in every panel.{char_ref_requirement}{character_sheet_requirement}{style_ref_requirement}"""
+        prev_page_req = ""
+        if previous_page_info:
+            prev_refs = [str(i) for _, i in previous_page_info]
+            prev_page_req = f"\n- STYLE CONTINUITY: Match the line-weight, shading, and color palette of previous pages {', '.join(prev_refs)} exactly."
 
-        # Negative prompt (all negative constraints)
-        negative_prompt = "overly complex panels, complex panel content, inconsistent characters, distorted proportions, dull colors, panel indices visible, panel numbers shown, cluttered dialogue, verbose dialogue, illegible text, misspelled words, duplicated titles, multiple title locations, uneven margins, mismatched fonts, text corruption, mojibake, garbled characters, blurry text, character appearance changes, incorrect clothing, clothing changes without script requirement, layout deviation from sketch, costume changes"
-        
-        # Format the content
-        formatted_prompt = prompt_content.format(
-            comic_style=comic_style,
-            title=page_data.get('title', ''),
-            layout_description=layout_description,
-            panels="\n".join(panels),
-            target_lang=target_lang,
-            character_ref_section=character_ref_section,
-            character_sheet_section=character_sheet_section,
-            style_ref_section=style_ref_section
-        )
-        
-        formatted_requirements = requirements_content.format(
-            comic_style=comic_style,
-            target_lang=target_lang,
-            char_ref_requirement=char_ref_requirement,
-            character_sheet_requirement=character_sheet_requirement,
-            style_ref_requirement=style_ref_requirement
-        )
-        
-        # Create structured JSON
-        img_prompt = {
+        requirements_content = f"""- LAYOUT: Strictly follow the {total_rows}-row layout specified.
+- Dialogue and Title MUST be in {target_lang}.
+- Use a font that matches the {style_desc} aesthetic.
+- Maintain consistent character appearances across all panels.{char_ref_req}{sheet_ref_req}{style_ref_req}{prev_page_req}
+- Render the title clearly at the top.
+- Ensure all text is legible and bubbles are correctly placed."""
+
+        negative_prompt = "overly complex panels, distorted proportions, inconsistent characters, panel indices, cluttered dialogue, blurry text, style drift, multiple title locations"
+
+        return json.dumps({
             "image_generation_data": {
-                "prompt": formatted_prompt.strip(),
-                "requirements": formatted_requirements.strip(),
+                "prompt": prompt_content.strip(),
+                "requirements": requirements_content.strip(),
                 "negative_prompt": negative_prompt
             }
-        }
-        
-        return json.dumps(img_prompt, ensure_ascii=False)
+        }, ensure_ascii=False)
 
     @staticmethod
     def _create_cover_prompt(
         comic_style: str,
         language: str = 'en',
         custom_requirements: str = '',
-        character_info: Optional[List[Tuple[str, str]]] = None
+        character_info: Optional[List[Tuple[str, str, int]]] = None
     ) -> str:
         """Create prompt for comic cover
 
@@ -442,7 +448,7 @@ IMPORTANT: Match the environment, architecture, color palette, brushwork, lighti
             comic_style: Style of the comic
             language: Language code
             custom_requirements: User's custom cover requirements
-            character_info: List of (character_name, image_path) tuples for reference
+            character_info: List of (character_name, description, image_index) tuples for reference
         """
         language_map = {
             'en': 'English',
@@ -454,8 +460,11 @@ IMPORTANT: Match the environment, architecture, color palette, brushwork, lighti
         character_ref_section = ""
         if character_info and len(character_info) > 0:
             char_descriptions = []
-            for idx, (char_name, _) in enumerate(character_info, 1):
-                char_descriptions.append(f"  - Reference image #{idx}: Character named '{char_name}'")
+            for char_name, char_desc, img_idx in character_info:
+                entry = f"  - Reference image #{img_idx}: Character named '{char_name}'"
+                if char_desc:
+                    entry += f" — visual description: {char_desc}"
+                char_descriptions.append(entry)
             character_ref_section = """
 # Character Reference Images:
 The following reference images are provided to show what specific characters look like.
@@ -465,7 +474,8 @@ You MUST draw these characters exactly as shown in their reference images:
 IMPORTANT: When any of these characters appear in the cover, you MUST use their exact appearance from the reference images - same face, hair, clothing, and style.
 """.format(char_list="\n".join(char_descriptions))
 
-        prompt_template = """Create a high-quality comic book cover in the style of {comic_style}.
+        final_style_desc = ImageService.STYLE_DESCRIPTIONS.get(comic_style, f"a {comic_style} animation style")
+        prompt_template = """Create a high-quality comic book cover using the specific art direction: {final_style_desc}.
 {character_ref_section}
 # Important Context:
 - The reference images provided show the story pages of this comic (after any character reference images).
@@ -475,7 +485,7 @@ IMPORTANT: When any of these characters appear in the cover, you MUST use their 
 
 # Requirements:
 - The image must be a vertical comic book cover composition.
-- The art style must strictly follow {comic_style}.
+- The art style must strictly follow the described direction: {final_style_desc}.
 - Make it eye-catching and dramatic while staying true to the story.
 - Feature the main characters and key scenes from the reference story pages.
 - High resolution, detailed, and professional quality.
@@ -503,7 +513,7 @@ User Requirements:
 ** You MUST implement ALL of the above user requirements. They are mandatory. **"""
 
         final_prompt = prompt_template.format(
-            comic_style=comic_style,
+            final_style_desc=final_style_desc,
             target_lang=target_lang,
             custom_section=custom_section,
             character_ref_section=character_ref_section
