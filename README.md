@@ -2,14 +2,7 @@
 
 <br/>
 
-```
-  ██████╗ ██████╗ ███╗   ███╗██╗ ██████╗██████╗  █████╗ ███████╗████████╗
- ██╔════╝██╔═══██╗████╗ ████║██║██╔════╝██╔══██╗██╔══██╗██╔════╝╚══██╔══╝
- ██║     ██║   ██║██╔████╔██║██║██║     ██████╔╝███████║█████╗     ██║
- ██║     ██║   ██║██║╚██╔╝██║██║██║     ██╔══██╗██╔══██║██╔══╝     ██║
- ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║╚██████╗██║  ██║██║  ██║██║        ██║
-  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝
-```
+# 🎨 comiCraft
 
 ### Turn your imagination into panels. One prompt at a time.
 
@@ -30,9 +23,7 @@
 
 <br/>
 
-<video src="assets/demo.mp4" controls autoplay loop muted width="100%">
-  <a href="assets/demo.mp4">Watch the demo</a>
-</video>
+<video src="https://github.com/user-attachments/assets/4297cea2-5b30-43d1-9e67-0637ad8378b5" controls autoplay loop muted width="100%"></video>
 
 </div>
 
